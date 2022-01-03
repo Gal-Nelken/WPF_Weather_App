@@ -1,0 +1,91 @@
+﻿<Window x:Class="WPA_Wether_App.View.WeatherWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPA_Wether_App.View"
+        xmlns:vm="clr-namespace:WPA_Weather_App.ViewModel"
+        mc:Ignorable="d"
+        Title="Weather App" Background="LightSkyBlue"  Height="600" Width="500" ResizeMode="NoResize">
+    <Window.Resources>
+        <vm:WeatherVM x:Key="weatherVM"/>
+    </Window.Resources>
+
+
+    <Grid Margin="5" DataContext="{StaticResource weatherVM}">
+        <Grid.ColumnDefinitions>
+
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Weather App" 
+                   FontSize="30" TextDecorations="Underline" FontWeight="DemiBold"
+                   Grid.Row="0" Margin="0,0,0,10"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,10"
+                    Grid.Row="1">
+            <Label Content="City Name:" FontSize="16"/>
+            <TextBox Width="300" Text="{Binding Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     ToolTip="Enter city name to search"
+                     VerticalContentAlignment="Center" 
+                     Margin="0,0,10,0"  
+                     FontSize="16"/>
+            <Button Content="🔎" ToolTip="Search" 
+                    Width="50" FontSize="16" Background="LightGray" Foreground="DarkBlue"
+                    Command="{Binding SearchCommand}" CommandParameter="{Binding Query}"/>
+        </StackPanel>
+
+        <ListView Grid.Row="2" 
+                  Margin="0,0,0,10" 
+                  ItemsSource="{Binding Cities}" SelectedValue="{Binding SelectedCity}"
+                  HorizontalContentAlignment="Stretch">
+    
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="5,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="{Binding LocalizedName, Mode=OneTime}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Country.LocalizedName, Mode=OneTime}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            
+        </ListView>
+
+        <Grid Grid.Row="3" Background="LightSteelBlue" DataContext="{Binding CurrentConditions}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel Grid.Column="0"  Margin="10,0,0,0">
+                <TextBlock DataContext="{StaticResource weatherVM}" 
+                           Text="{Binding SelectedCity.LocalizedName}" 
+                           FontSize="20"/>
+                <TextBlock Text="{Binding WeatherText}" 
+                           FontSize="16"/>
+            </StackPanel>
+
+            <TextBlock Text="{Binding Temperature.Metric.Value, StringFormat={}{0}°C}" 
+                       Margin="0,0,10,0"
+                       VerticalAlignment="Center"
+                       Grid.Column="1" 
+                       FontSize="30"/>
+        </Grid>
+        
+        
+    </Grid>
+</Window>
